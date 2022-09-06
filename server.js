@@ -29,5 +29,5 @@ db.on('open', () => console.log('connected to mongoose'))
 app.use('/', indexRoute)
 
 app.listen(process.env.PORT || 3000)
-// listen on the defined port, and if it not been sdefined (as in the dev env for example) set it to port 3000.
+// listen on the defined port, and if it not been defined (as in the dev env for example) set it to port 3000.
  
