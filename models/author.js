@@ -3,7 +3,7 @@ const authorSchema = mongoose.Schema({
     name: {
         type: String,
         required: true
-    }
+    } 
 })
 
-module.exports = mongoose.model('GreatAuthor', authorSchema)
+module.exports = mongoose.model('Author', authorSchema)

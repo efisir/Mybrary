@@ -9,6 +9,7 @@ const bodyParser = require('body-parser')
 
 const indexRoute = require('./routes/index')
 const authorRoute = require('./routes/authors')
+const bookRoute = require('./routes/books')
  
 app.set('view engine', 'ejs')
 app.set('views', __dirname + '/views')
@@ -17,7 +18,7 @@ app.set('layout', 'layouts/layout')
 // set layouts (header & footer across all pages) inside a layout file
 app.use(expressLayout)
 app.use(express.static('public'))
-// that means all public files (html, css, js) will be there.
+// that means all public files (html, css, js, imgages) will be there.
 
 app.use(bodyParser.urlencoded({limit: '10mb', extended: false}))
 
@@ -34,6 +35,8 @@ app.use('/', indexRoute)
 
 // use also authors route
 app.use('/authors', authorRoute)
+
+app.use('/books',bookRoute)
 
 app.listen(process.env.PORT || 3000)
 // listen on the defined port, and if it not been defined (as in the dev env for example) set it to port 3000.

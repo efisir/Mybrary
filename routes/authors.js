@@ -1,5 +1,6 @@
 
 const express = require('express')
+// const author = require('../models/author')
 const router = express.Router()
 const Author = require('../models/author')
 
@@ -12,7 +13,7 @@ router.get('/', async (req, res)=>{
         const authors = await Author.find(searchOptions)
         res.render('authors/index', 
         { authors: authors,
-          searchOptions: req.query })    
+           searchOptions: req.query })    
     }
     catch{
         //if someting goes wrong in the db fetch redirect to the home page.
