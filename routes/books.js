@@ -5,17 +5,9 @@ const Book = BookModel.book
 const coverImgBasePath = BookModel.coverImgBasePath
 const router = express.Router()
 
-const fs = require('fs')
-const path = require('path')
-const uploadPath = path.join('public', coverImgBasePath)
-const multer = require('multer')
+
 const imageMimeTypes = ['image/jpeg', 'image/png', 'image/gif']
-const upload = multer({
-    dest: uploadPath,
-    fileFilter: (req, file, callback) => {
-        callback(null, imageMimeTypes.includes(file.mimetype))
-    }
-})
+
 
 // All Books Route
 router.get('/', async (req, res)=>{
@@ -54,7 +46,7 @@ router.get('/new', async (req, res) => {
 })
 
 //Create Book Route. we use post cause we are just sending info to the server rather than rendering page for the client.
-router.post('/', upload.single('cover'), async (req,res) => {
+router.post('/', async (req,res) => {
     const fileName = req.file != null ? req.file.filename : null
     console.log('loging new book param:')
     // console.log(req.body.title.trim())
@@ -69,10 +61,9 @@ router.post('/', upload.single('cover'), async (req,res) => {
             author: req.body.author.trim(),
             publishDate: new Date(req.body.publishDate),
             pageCount: req.body.pageCount,
-            coverImgName:  fileName.trim(),
             description:  req.body.description.trim()
         })
-        console.log(book)
+        saveCover(book, req.body.cover)
         try{
             const newBook = await book.save()
             //res.redirect(`books/${newBook.id}`)
@@ -81,13 +72,11 @@ router.post('/', upload.single('cover'), async (req,res) => {
         catch (e){
             console.log('got to the catch part in create book method')
             console.error(e)
-            removeBookCoverFromFS(book)
             randerNewPage(res, book, true)      
         }
-     }
+})
 
-    
-)
+
 
 
 async function randerNewPage(res, book, hasErr = false){
@@ -109,18 +98,15 @@ async function randerNewPage(res, book, hasErr = false){
     }
 }
 
-function removeBookCoverFromFS(book){
 
-    if (book != null &&  book.coverImgName !=null && book.coverImgName != ''){
-        console.log('path= ', path, 'uploadPath= ', uploadPath, 'book.coverImgName=', book.coverImgName)
-        fs.unlink(path.join(uploadPath, book.coverImgName),(err)=>{
-            if (err){
-                console.error(err)
-            }
-        })
+function saveCover(book, coverEncoded){
+    if (coverEncoded == null) return
+    const cover = JSON.parse(coverEncoded)
+    if (cover != null && imageMimeTypes.includes(cover.type)){
+        book.coverImage = new Buffer.from(cover.data, 'base64')
+        book.coverImageType = cover.type
     }
 }
-
 
 module.exports = router
 
