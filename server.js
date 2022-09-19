@@ -6,10 +6,12 @@ const express = require('express')
 const app = express()
 const expressLayout = require('express-ejs-layouts')
 const bodyParser = require('body-parser')
+const methodOverride = require('method-override')
 
 const indexRoute = require('./routes/index')
 const authorRoute = require('./routes/authors')
 const bookRoute = require('./routes/books')
+
  
 app.set('view engine', 'ejs')
 app.set('views', __dirname + '/views')
@@ -21,7 +23,7 @@ app.use(express.static('public'))
 // that means all public files (html, css, js, imgages) will be there.
 
 app.use(bodyParser.urlencoded({limit: '10mb', extended: false}))
-
+app.use(methodOverride('_method'))
 
 const mongoose = require('mongoose')
 mongoose.connect(process.env.DATABASE_URL, {useNewUrlParser: true})
