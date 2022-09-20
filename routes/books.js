@@ -12,6 +12,7 @@ const imageMimeTypes = ['image/jpeg', 'image/png', 'image/gif']
 // All Books Route
 router.get('/', async (req, res)=>{
     try{
+        console.log('at the begining of all books route')
         let query = Book.find()
         if (req.query.title != null && req.query.title.trim() != ''){
             query = query.regex('title', new RegExp(req.query.title, 'i'))
@@ -32,29 +33,33 @@ router.get('/', async (req, res)=>{
       
       res.redirect('/')  
     }
-    //res.send('All Books')
     
 })
-
-
-
 
 //New Book Route )(just for displaying the form not the actual creation operation)
-router.get('/new', async (req, res) => {
-    
-    randerNewPage(res, new Book())
+router.get('/new',  (req, res) => {
+    renderFormPage(res, new Book(), 'new', false)
 })
+
+
+router.get('/:id', async (req,res) => {
+    try{
+        console.log('at the begining of  books by id route')
+        const book = await Book.findById(req.params.id).populate('author').exec()
+        res.render(`books/show`,
+        {book: book,
+        author: book.author})
+    }catch (e){
+        console.log(e)
+        res.redirect('/')
+    }
+})
+
+
 
 //Create Book Route. we use post cause we are just sending info to the server rather than rendering page for the client.
 router.post('/', async (req,res) => {
-    const fileName = req.file != null ? req.file.filename : null
-    console.log('loging new book param:')
-    // console.log(req.body.title.trim())
-    // console.log(req.body.author.trim())
-    // console.log(req.body.publishDate)
-    // console.log(req.body.pageCount)
-    // console.log(fileName.trim())
-    // console.log(req.body.description.trim())
+    console.log('at the begining create  book route')
     const book = new Book(
         {
             title: req.body.title.trim(),
@@ -66,35 +71,84 @@ router.post('/', async (req,res) => {
         saveCover(book, req.body.cover)
         try{
             const newBook = await book.save()
-            //res.redirect(`books/${newBook.id}`)
             res.redirect('books')
-        }
-        catch (e){
-            console.log('got to the catch part in create book method')
-            console.error(e)
-            randerNewPage(res, book, true)      
+        }catch{
+            renderFormPage(res, book, 'new', true)
         }
 })
 
+router.get('/:id/edit', async (req, res)=> {
+        const book = await Book.findById(req.params.id)
+        renderFormPage(res, book, 'edit', false)
+})
 
 
-
-async function randerNewPage(res, book, hasErr = false){
+router.put('/:id', async (req, res)=> {
+    let book
     try{
+        book = await Book.findById(req.params.id)
+        book.title = req.body.title
+        book.publishDate = req.body.publishDate
+        book.pageCount = req.body.pageCount
+        book.description = req.body.description
+        if (req.body.cover != null && req.body.cover != ''){
+            saveCover(book, req.body.cover)
+        } 
+        await book.save()            
+        res.redirect(`/books/${book.id}`)
+    }catch{
+        if (book != null){
+             renderFormPage(res, book, 'edit')
+        }else{
+            res.redirect('/')        }
+        res.redirect(`books/${req.params.id}`)
+
+    }
+})
+
+router.delete('/:id', async (req, res)=>{
+    let book
+    try{
+        book = await Book.findById(req.params.id).populate('author').exec()
+        book.remove()
+        res.redirect('/')
+    }catch(e){
+        if (book == null){
+            res.redirect('/')
+        }else{
+            res.render('books/show',{
+                book: book,
+                errorMessage: 'could not remove book'+e
+            }
+            )
+        }
+    }
+
+})
+
+async function renderFormPage(res, book, form, hasErr = false){
+    try{
+        console.log('at the begining render new page function')
         const allAuthors = await author.find({})
         const params = {
             author: allAuthors,
             book: book
         }
         if (hasErr) {
-            params.errorMessage = 'erorr creating book'
+            if (form == 'new'){
+                params.errorMessage = 'erorr creating book'
+            }else{
+                params.errorMessage = 'erorr updating book'
+            }
+            
         }
-
-        res.render('books/new', params)
+        console.log('got just before rendering the new book page')
+        res.render(`books/${form}`, params)
 
     }catch(e){
         console.error(e)
-        res.redirect('books')
+        res.redirect('/books')
+        
     }
 }
 
