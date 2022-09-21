@@ -12,7 +12,6 @@ const imageMimeTypes = ['image/jpeg', 'image/png', 'image/gif']
 // All Books Route
 router.get('/', async (req, res)=>{
     try{
-        console.log('at the begining of all books route')
         let query = Book.find()
         if (req.query.title != null && req.query.title.trim() != ''){
             query = query.regex('title', new RegExp(req.query.title, 'i'))
@@ -29,7 +28,6 @@ router.get('/', async (req, res)=>{
             searchOptions: req.query
         })
     } catch (e){
-      console.log (e)  
       
       res.redirect('/')  
     }
@@ -44,13 +42,12 @@ router.get('/new',  (req, res) => {
 
 router.get('/:id', async (req,res) => {
     try{
-        console.log('at the begining of  books by id route')
+
         const book = await Book.findById(req.params.id).populate('author').exec()
         res.render(`books/show`,
         {book: book,
         author: book.author})
     }catch (e){
-        console.log(e)
         res.redirect('/')
     }
 })
@@ -59,7 +56,6 @@ router.get('/:id', async (req,res) => {
 
 //Create Book Route. we use post cause we are just sending info to the server rather than rendering page for the client.
 router.post('/', async (req,res) => {
-    console.log('at the begining create  book route')
     const book = new Book(
         {
             title: req.body.title.trim(),
@@ -88,7 +84,7 @@ router.put('/:id', async (req, res)=> {
     try{
         book = await Book.findById(req.params.id)
         book.title = req.body.title
-        book.publishDate = req.body.publishDate
+        book.publishDate = new Date(req.body.publishDate)
         book.pageCount = req.body.pageCount
         book.description = req.body.description
         if (req.body.cover != null && req.body.cover != ''){
@@ -128,7 +124,6 @@ router.delete('/:id', async (req, res)=>{
 
 async function renderFormPage(res, book, form, hasErr = false){
     try{
-        console.log('at the begining render new page function')
         const allAuthors = await author.find({})
         const params = {
             author: allAuthors,
@@ -142,11 +137,9 @@ async function renderFormPage(res, book, form, hasErr = false){
             }
             
         }
-        console.log('got just before rendering the new book page')
         res.render(`books/${form}`, params)
 
     }catch(e){
-        console.error(e)
         res.redirect('/books')
         
     }

@@ -68,16 +68,12 @@ router.get('/:id', async (req, res)=>{
 
 router.get('/:id/edit', async (req,res)=>{
     try{
-        console.log('_____')
         const author = await Author.findById(req.params.id)
         res.render('authors/edit', {author: author})
-        console.log('$$$$')
     }catch(e){
-        console.log('###', e)
         res.redirect('/authors/')
     }
 
-    //res.send('edit auther id = '+req.params.id + '<br> <a href="/">Home</a>')
 } )
 
 router.put('/:id', async (req, res)=>{
@@ -117,9 +113,6 @@ router.delete('/:id', async(req,res)=>{
         res.redirect('/authors')
     }
     catch (e){
-        console.log('err message starting')
-        console.error(e)
-        console.log('err message ending')
         if (author == null){
             res.redirect('/')
         }
