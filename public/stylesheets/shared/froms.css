@@ -1,11 +1,14 @@
 :root{
-    --form-item-fomt-size: 1.2rem;
+    --form-item-font-size: 1.2rem;
     --form-iput-border-color: hsl(var(--color-base-hue), 100%, 50%);
     --form-input-background-color: hsl(var(--color-base-hue), 100%, 31% );
     --form-iput-border-color-light: hsl(var(--color-base-hue), 100%, 80%);
     --file-pond-width: 200px;
-
+    --book-cover-width: 250px;
+    --book-cover-large-width: 325px;
+    --book-cover-aspect-ratio:  0.75;
 }
+
 
 .form-row {
     color: var(--color-text-light);
@@ -75,6 +78,15 @@
     color: var(--color-text-light);
     font-size: inherit;
 }
+
+
+
+.filepond--root{
+    width: var(--book-cover-width);
+    height: calc(var(--book-cover-width)/var(--book-cover-aspect-ratio));
+    margin-bottom:-0.1rem;
+}
+
 
 .form-row-end {
     justify-content: flex-end;

@@ -2,9 +2,9 @@
 @import 'shared/variables.css';
 @import 'shared/header.css';
 @import 'shared/buttons.css';
-@import 'shared/froms.css';
 @import 'shared/authors.css';
 @import 'shared/books.css';
+@import 'shared/froms.css';
 
 :root {
   font-family: 'Gotham Rounded';
