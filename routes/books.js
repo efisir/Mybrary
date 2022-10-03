@@ -84,7 +84,7 @@ router.put('/:id', async (req, res)=> {
     try{
         book = await Book.findById(req.params.id)
         book.title = req.body.title
-        author: req.body.author.trim()
+        book.author = req.body.author.trim()
         book.publishDate = new Date(req.body.publishDate)
         book.pageCount = req.body.pageCount
         book.description = req.body.description
