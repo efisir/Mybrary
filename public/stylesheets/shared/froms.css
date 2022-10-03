@@ -3,6 +3,7 @@
     --form-iput-border-color: hsl(var(--color-base-hue), 100%, 50%);
     --form-input-background-color: hsl(var(--color-base-hue), 100%, 31% );
     --form-iput-border-color-light: hsl(var(--color-base-hue), 100%, 80%);
+    --file-pond-width: 200px;
 
 }
 
@@ -19,6 +20,7 @@
     margin-left: 2rem;      
     flex-grow: 1;
     flex-basis: 0;
+    width: 1000px;
 }
 
 .form-item:first-child {
